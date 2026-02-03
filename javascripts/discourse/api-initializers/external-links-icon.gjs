@@ -1,65 +1,43 @@
 import { apiInitializer } from "discourse/lib/api";
 
 export default apiInitializer("0.11.1", (api) => {
-  api.decorateCooked((element) => {
-    addIcons(element);
-  });
-
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        if (node.nodeType === 1 && node.querySelector("a[href]")) {
-          addIcons(node);
-        }
-      });
-    });
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
+  api.decorateCooked(addIcons);
 
   function addIcons(container) {
-    if (!container || typeof container.querySelectorAll !== "function") {
-      return;
-    }
+    if (!container?.querySelectorAll) return;
 
     const links = container.querySelectorAll("a[href]:not([data-ext-icon])");
-    if (!links.length) {
-      return;
-    }
-
+    
     links.forEach((link) => {
-      link.setAttribute("data-ext-icon", "true");
+      link.setAttribute("data-ext-icon", "processed");
 
-      // First, perform fast DOM checks to exclude links we never want to touch.
-      if (link.closest("#topic-title, .topic-title") || link.matches(".mention, .hashtag, [data-user-card], .onebox, .breadcrumb a, .back")) {
-        return;
-      }
-
-      // --- THIS IS THE KEY FIX ---
-      // Wrap URL parsing in a try...catch block. This prevents invalid URLs
-      // (like mailto:, tel:, etc.) from throwing an error and stopping the script.
-      let linkUrl;
-      try {
-        linkUrl = new URL(link.href);
-      } catch (e) {
-        // Not a valid URL we can process, so we skip it.
-        return;
-      }
-
-      // Now, perform the remaining checks on the valid URL object.
-      if (!["http:", "https:"].includes(linkUrl.protocol)) {
-        return;
-      }
-
-      if (linkUrl.hostname === window.location.hostname) {
+      // Exclusions
+      if (link.closest(".fancy-title, .topic-link, .onebox, .breadcrumb, .quote") ||
+          link.matches("a.title, .mention, .hashtag, [data-user-card], .back") ||
+          link.querySelector("img")) {
         return;
       }
       
+      let linkUrl;
+      try {
+        linkUrl = new URL(link.href);
+      } catch {
+        return;
+      }
+      
+      if (!["http:", "https:"].includes(linkUrl.protocol) ||
+          linkUrl.hostname === window.location.hostname) {
+        return;
+      }
+
+      // Add icon
       const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      svg.setAttribute('class', 'fa d-icon d-icon-up-right-from-square svg-icon svg-string ext-icon');
+      svg.setAttribute('class', 'fa d-icon d-icon-up-right-from-square svg-icon ext-icon');
       svg.setAttribute('aria-hidden', 'true');
       svg.innerHTML = '<use href="#up-right-from-square"></use>';
       
       link.appendChild(svg);
+      link.setAttribute("data-ext-icon", "true");
     });
   }
 });
