@@ -4,3 +4,10 @@ a[href][data-ext-icon="true"] svg.ext-icon {
   margin-left: 0.2em;
   vertical-align: text-top;
 }
+
+/* Hide external link icons in topic titles */
+.fancy-title a[href] svg.ext-icon,
+h1 a.raw-topic-link svg.ext-icon,
+h1 a.title svg.ext-icon {
+  display: none;
+}
