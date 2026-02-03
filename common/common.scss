@@ -7,7 +7,7 @@ a[href][data-ext-icon="true"] svg.ext-icon {
 }
 
 /* Hide icons in topic title links specifically */
-//a.raw-topic-link svg.ext-icon,
-//a.title.raw-link svg.ext-icon {
-//  display: none !important;
-//}
+a.raw-topic-link svg.ext-icon,
+a.title.raw-link svg.ext-icon {
+  display: none !important;
+}
