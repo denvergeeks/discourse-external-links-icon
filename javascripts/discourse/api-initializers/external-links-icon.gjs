@@ -21,45 +21,57 @@ export default apiInitializer("0.11.1", (api) => {
       return;
     }
 
+    // Select all links that have not yet been processed by this script.
     const links = container.querySelectorAll("a[href]:not([data-ext-icon])");
     if (!links.length) {
       return;
     }
 
     links.forEach((link) => {
-      link.setAttribute("data-ext-icon", "true");
+      // Mark the link as processed immediately to prevent re-running.
+      link.setAttribute("data-ext-icon", "processed");
 
-      // First, perform fast DOM checks to exclude links we never want to touch.
-      if (link.closest("#topic-title, .topic-title") || link.matches(".mention, .hashtag, [data-user-card], .onebox, .breadcrumb a, .back")) {
+      // --- Start of Exclusion Rules ---
+
+      // Rule 1: Exclude links based on their context or class. These are fast, safe checks.
+      // This CORRECTED selector now properly identifies links within topic titles on all pages.
+      if (link.closest("#topic-title") || link.matches("a.title") ||
+          link.closest(".onebox, .breadcrumb") ||
+          link.matches(".mention, .hashtag, [data-user-card], .back")) {
         return;
       }
-
-      // --- THIS IS THE KEY FIX ---
-      // Wrap URL parsing in a try...catch block. This prevents invalid URLs
-      // (like mailto:, tel:, etc.) from throwing an error and stopping the script.
+      
+      // Rule 2: Safely parse the link's URL. Invalid URLs (like 'mailto:') will
+      // throw an error, so we catch it and skip the link.
       let linkUrl;
       try {
         linkUrl = new URL(link.href);
       } catch (e) {
-        // Not a valid URL we can process, so we skip it.
-        return;
+        return; // Skip invalid URLs.
       }
-
-      // Now, perform the remaining checks on the valid URL object.
+      
+      // Rule 3: Exclude links that are not http or https.
       if (!["http:", "https:"].includes(linkUrl.protocol)) {
         return;
       }
-
+      
+      // Rule 4: Exclude internal links by comparing the hostname.
       if (linkUrl.hostname === window.location.hostname) {
         return;
       }
       
+      // --- End of Exclusion Rules ---
+
+      // If a link passes all the checks, it's a true external link. Add the icon.
       const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
       svg.setAttribute('class', 'fa d-icon d-icon-up-right-from-square svg-icon svg-string ext-icon');
       svg.setAttribute('aria-hidden', 'true');
       svg.innerHTML = '<use href="#up-right-from-square"></use>';
       
       link.appendChild(svg);
+      
+      // Overwrite the 'processed' status to 'true' to signify an icon was added.
+      link.setAttribute("data-ext-icon", "true");
     });
   }
 });
