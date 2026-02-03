@@ -11,3 +11,8 @@ a.raw-topic-link svg.ext-icon,
 a.title.raw-link svg.ext-icon {
   display: none !important;
 }
+
+/* Hide icons in topic list featured links (already has core icon) */
+a.topic-featured-link svg.ext-icon {
+  display: none !important;
+}
