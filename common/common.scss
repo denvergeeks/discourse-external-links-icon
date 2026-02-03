@@ -1,16 +1,7 @@
-/* discourse-external-links-icon/common/common.scss */
-
-a[href][data-ext-icon] svg.ext-icon,
-a[href] svg.ext-icon[data-ext-icon],
-h1 a[href][data-ext-icon] svg.ext-icon,
-h2 a[href][data-ext-icon] svg.ext-icon,
-h3 a[href][data-ext-icon] svg.ext-icon,
-h4 a[href][data-ext-icon] svg.ext-icon,
-h5 a[href][data-ext-icon] svg.ext-icon,
-h6 a[href][data-ext-icon] svg.ext-icon {
+a[data-ext-icon] .ext-icon {
   width: 0.75em;
   height: 0.75em;
   margin-left: 0.2em;
-  margin-right: 0.2em;
+  /* You probably don't need margin-right */
   vertical-align: text-top;
 }
