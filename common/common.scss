@@ -1,3 +1,4 @@
+/* Show external link icons by default */
 a[href][data-ext-icon="true"] svg.ext-icon {
   width: 0.75em;
   height: 0.75em;
@@ -5,9 +6,8 @@ a[href][data-ext-icon="true"] svg.ext-icon {
   vertical-align: text-top;
 }
 
-/* Hide external link icons in topic titles */
-.fancy-title a[href] svg.ext-icon,
-h1 a.raw-topic-link svg.ext-icon,
-h1 a.title svg.ext-icon {
-  display: none;
+/* Hide icons in topic title links specifically */
+a.raw-topic-link svg.ext-icon,
+a.title.raw-link svg.ext-icon {
+  display: none !important;
 }
