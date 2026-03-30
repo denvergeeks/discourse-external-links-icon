@@ -1,18 +1,15 @@
-/* Show external link icons by default */
-a[href][data-ext-icon="true"] svg.ext-icon {
-  width: 0.75em;
-  height: 0.75em;
-  margin-left: 0.2em;
-  vertical-align: text-top;
-}
+@import "svg-icon-mixins";
 
-/* Hide icons in topic title links specifically */
-a.raw-topic-link svg.ext-icon,
-a.title.raw-link svg.ext-icon {
-  display: none !important;
-}
+// External Links
 
-/* Hide icons in topic list featured links (already has core icon) */
-a.topic-featured-link svg.ext-icon {
-  display: none !important;
+.ext-link {
+  &:after {
+    content: "";
+    display: inline-block;
+    vertical-align: text-top;
+    @include svg-icon(solid, arrow-up-right-from-square, var(--success), .65em, .65em);
+    mask-size: .6em .6em;
+    mask-position: .05em .05em;
+    opacity: 1;
+  }
 }
